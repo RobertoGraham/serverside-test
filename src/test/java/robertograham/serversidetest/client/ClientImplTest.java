@@ -1,5 +1,6 @@
 package robertograham.serversidetest.client;
 
+import org.apache.http.impl.client.HttpClients;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import robertograham.serversidetest.client.domain.Product;
@@ -14,7 +15,7 @@ final class ClientImplTest {
     private final ClientImpl client;
 
     ClientImplTest() {
-        client = new ClientImpl();
+        client = new ClientImpl(HttpClients.createDefault());
     }
 
     @Test
