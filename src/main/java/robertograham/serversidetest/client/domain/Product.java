@@ -1,0 +1,66 @@
+package robertograham.serversidetest.client.domain;
+
+import java.math.BigDecimal;
+import java.util.Objects;
+
+public final class Product {
+
+    private final String title;
+    private final int kiloCaloriesPerHundredGrams;
+    private final BigDecimal unitPrice;
+    private final String description;
+
+    public Product(final String title,
+                   final int kiloCaloriesPerHundredGrams,
+                   final BigDecimal unitPrice,
+                   final String description) {
+        this.title = title;
+        this.kiloCaloriesPerHundredGrams = kiloCaloriesPerHundredGrams;
+        this.unitPrice = unitPrice;
+        this.description = description;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public int getKiloCaloriesPerHundredGrams() {
+        return kiloCaloriesPerHundredGrams;
+    }
+
+    public BigDecimal getUnitPrice() {
+        return unitPrice;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    @Override
+    public String toString() {
+        return "Product{" +
+            "title='" + title + '\'' +
+            ", kiloCaloriesPerHundredGrams=" + kiloCaloriesPerHundredGrams +
+            ", unitPrice=" + unitPrice +
+            ", description='" + description + '\'' +
+            '}';
+    }
+
+    @Override
+    public boolean equals(final Object object) {
+        if (this == object)
+            return true;
+        if (!(object instanceof Product))
+            return false;
+        final Product product = (Product) object;
+        return kiloCaloriesPerHundredGrams == product.kiloCaloriesPerHundredGrams &&
+            title.equals(product.title) &&
+            unitPrice.equals(product.unitPrice) &&
+            description.equals(product.description);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(title, kiloCaloriesPerHundredGrams, unitPrice, description);
+    }
+}
