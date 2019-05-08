@@ -14,10 +14,10 @@ public final class Product {
                    final int kiloCaloriesPerHundredGrams,
                    final BigDecimal unitPrice,
                    final String description) {
-        this.title = title;
+        this.title = Objects.requireNonNull(title, "title cannot be null");
         this.kiloCaloriesPerHundredGrams = kiloCaloriesPerHundredGrams;
-        this.unitPrice = unitPrice;
-        this.description = description;
+        this.unitPrice = Objects.requireNonNull(unitPrice, "unitPrice cannot be null");
+        this.description = Objects.requireNonNull(description, "description cannot be null");
     }
 
     public String getTitle() {

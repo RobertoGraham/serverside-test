@@ -9,23 +9,22 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public final class Main {
 
+    private static final JsonWriterFactory JSON_WRITER_FACTORY = Json.createWriterFactory(Stream.of(new SimpleEntry<>(JsonGenerator.PRETTY_PRINTING, true))
+        .collect(Collectors.toMap(Entry::getKey, Entry::getValue)));
+
     private Main() {
     }
 
     public static void main(final String[] args) {
-        final Map<String, Boolean> jsonWriterFactoryProperties = Stream.of(new SimpleEntry<>(JsonGenerator.PRETTY_PRINTING, true))
-            .collect(Collectors.toMap(Entry::getKey, Entry::getValue));
-        final JsonWriterFactory jsonWriterFactory = Json.createWriterFactory(jsonWriterFactoryProperties);
         try (final Client client = Client.newClient();
              final StringWriter stringWriter = new StringWriter();
-             final JsonWriter jsonWriter = jsonWriterFactory.createWriter(stringWriter)) {
+             final JsonWriter jsonWriter = JSON_WRITER_FACTORY.createWriter(stringWriter)) {
             final List<Product> products = client.getProducts();
             final JsonArrayBuilder jsonArrayBuilder = Json.createArrayBuilder();
             products.stream()
