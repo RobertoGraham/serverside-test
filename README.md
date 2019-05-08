@@ -1,6 +1,6 @@
 # serverside-test
 
-## System Requirements
+## System requirements
 
 * Java 1.8
 * Maven 3.6.1
@@ -10,8 +10,8 @@
 Run the following commands in the root directory of the project:
 
 ```text
-mvn install
-mvn exec:java -Dexec.mainClass="robertograham.serversidetest.Main"
+mvn install -DskipTests
+mvn exec:java
 ```
 
 ## Running the tests
