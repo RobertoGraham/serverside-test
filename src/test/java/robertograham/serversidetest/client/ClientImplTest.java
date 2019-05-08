@@ -57,6 +57,8 @@ final class ClientImplTest {
         assertEquals(client.calculateProductsUnitPriceVat(products), BigDecimal.ZERO.setScale(2, RoundingMode.UNNECESSARY));
         products.add(new Product("", 0, new BigDecimal(5), ""));
         assertEquals(client.calculateProductsUnitPriceVat(products), new BigDecimal("0.83"));
+        products.add(new Product("", 0, BigDecimal.ZERO, ""));
+        assertEquals(client.calculateProductsUnitPriceVat(products), new BigDecimal("0.83"));
     }
 
     @Test
