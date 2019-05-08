@@ -5,6 +5,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import robertograham.serversidetest.client.domain.Product;
 
+import java.io.IOException;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -20,7 +21,7 @@ final class ClientImplTest {
 
     @Test
     @DisplayName("ClientImpl.getProducts returns populated list")
-    void getProductsReturnsPopulatedList() {
+    void getProductsReturnsPopulatedList() throws IOException {
         final List<Product> products = client.getProducts();
         assertNotNull(products, "ClientImpl.getProducts returned null");
         assertFalse(products.isEmpty(), "ClientImpl.getProducts returned empty list");

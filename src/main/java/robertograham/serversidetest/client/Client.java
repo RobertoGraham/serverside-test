@@ -3,6 +3,7 @@ package robertograham.serversidetest.client;
 import org.apache.http.impl.client.HttpClients;
 import robertograham.serversidetest.client.domain.Product;
 
+import java.io.IOException;
 import java.util.List;
 
 public interface Client extends AutoCloseable {
@@ -11,5 +12,8 @@ public interface Client extends AutoCloseable {
         return new ClientImpl(HttpClients.createDefault());
     }
 
-    List<Product> getProducts();
+    @Override
+    void close();
+
+    List<Product> getProducts() throws IOException;
 }
