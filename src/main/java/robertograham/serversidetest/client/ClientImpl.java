@@ -25,7 +25,8 @@ import java.util.stream.Collectors;
 
 final class ClientImpl implements Client {
 
-    private static final URI PRODUCT_LIST_URI = URI.create("https://jsainsburyplc.github.io/serverside-test/site/www.sainsburys.co.uk/webapp/wcs/stores/servlet/gb/groceries/berries-cherries-currants6039.html");
+    private static final URI PRODUCT_LIST_PAGE_URI = URI.create("https://jsainsburyplc.github.io/serverside-test/site/www.sainsburys.co.uk/webapp/wcs/stores/servlet/gb/groceries/berries-cherries-currants6039.html");
+    private static final BigDecimal VAT = new BigDecimal("1.2");
     private final CloseableHttpClient httpClient;
 
     ClientImpl(final CloseableHttpClient httpClient) {
@@ -43,22 +44,39 @@ final class ClientImpl implements Client {
         final Document productsDocument = Jsoup.parse(productsPageHtml);
         final Elements productElements = productsDocument.select(".product");
         return productElements.stream()
-            .map(this::getProductFromProductElement)
+            .map(this::getOptionalProductFromProductElement)
+            .filter(Optional::isPresent)
+            .map(productOptional -> productOptional.orElse(null))
             .collect(Collectors.toList());
     }
 
-    private Product getProductFromProductElement(final Element productElement) {
+    @Override
+    public BigDecimal calculateProductsUnitPriceGross(final List<Product> products) {
+        Objects.requireNonNull(products, "products cannot be null");
+        return products.stream()
+            .map(Product::getUnitPrice)
+            .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
+
+    @Override
+    public BigDecimal calculateProductsUnitPriceVat(final List<Product> products) {
+        Objects.requireNonNull(products, "products cannot be null");
+        final BigDecimal gross = calculateProductsUnitPriceGross(products);
+        return gross.subtract(gross.divide(VAT, 2, BigDecimal.ROUND_HALF_UP));
+    }
+
+    private Optional<Product> getOptionalProductFromProductElement(final Element productElement) {
         final BigDecimal unitPrice = getUnitPriceFromProductElement(productElement);
         final String title = getTitleFromProductElement(productElement);
         final String productPageLink = getProductPageLinkFromProductElement(productElement);
         try {
-            final String productPageHtml = getResponseBody(PRODUCT_LIST_URI.resolve(productPageLink));
+            final String productPageHtml = getResponseBody(PRODUCT_LIST_PAGE_URI.resolve(productPageLink));
             final Document productDocument = Jsoup.parse(productPageHtml);
             final int kiloCaloriesPerHundredGrams = getKiloCaloriesPerHundredGramsFromProductDocument(productDocument);
             final String description = getDescriptionFromProductDocument(productDocument);
-            return new Product(title, kiloCaloriesPerHundredGrams, unitPrice, description);
+            return Optional.of(new Product(title, kiloCaloriesPerHundredGrams, unitPrice, description));
         } catch (final IOException exception) {
-            throw new IllegalStateException("Could extract html for product: " + title, exception);
+            return Optional.empty();
         }
     }
 
@@ -82,7 +100,7 @@ final class ClientImpl implements Client {
     }
 
     private String getProductsPageHtml() throws IOException {
-        return getResponseBody(PRODUCT_LIST_URI);
+        return getResponseBody(PRODUCT_LIST_PAGE_URI);
     }
 
     private int getKiloCaloriesPerHundredGramsFromProductDocument(final Document productDocument) {
