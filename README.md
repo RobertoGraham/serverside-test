@@ -2,7 +2,7 @@
 
 ## System Requirements
 
-* Java 8
+* Java 1.8
 * Maven 3.6.1
 
 ## Running the app
