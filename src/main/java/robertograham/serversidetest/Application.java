@@ -19,16 +19,15 @@ import java.util.stream.Stream;
 
 public final class Application {
 
-    private static final JsonWriterFactory JSON_WRITER_FACTORY = Json.createWriterFactory(Stream.of(new SimpleEntry<>(JsonGenerator.PRETTY_PRINTING, true))
-        .collect(Collectors.toMap(Entry::getKey, Entry::getValue)));
-
     private Application() {
     }
 
     public static void main(final String[] args) {
+        final JsonWriterFactory jsonWriterFactory = Json.createWriterFactory(Stream.of(new SimpleEntry<>(JsonGenerator.PRETTY_PRINTING, true))
+            .collect(Collectors.toMap(Entry::getKey, Entry::getValue)));
         try (final ProductService productService = ProductService.newProductService();
              final StringWriter stringWriter = new StringWriter();
-             final JsonWriter jsonWriter = JSON_WRITER_FACTORY.createWriter(stringWriter)) {
+             final JsonWriter jsonWriter = jsonWriterFactory.createWriter(stringWriter)) {
             final List<Product> products = productService.getProducts();
             final ExportService exportService = ExportService.newExportService();
             final JsonObject exportJsonObject = exportService.getJsonObjectFromProducts(products);
