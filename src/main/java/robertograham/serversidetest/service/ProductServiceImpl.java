@@ -67,6 +67,7 @@ final class ProductServiceImpl implements ProductService {
     private BigDecimal getUnitPriceFromProductElement(final Element productElement) {
         final String unitPriceString = Optional.ofNullable(productElement.selectFirst(".pricePerUnit"))
             .map(Element::text)
+            .filter(unitPrice -> unitPrice.matches("^£[0-9]+\\.[0-9]{2}/unit$"))
             .orElse("£0.00/unit");
         return new BigDecimal(unitPriceString.substring(1, unitPriceString.indexOf("/")));
     }
@@ -90,6 +91,7 @@ final class ProductServiceImpl implements ProductService {
     private int getKiloCaloriesPerHundredGramsFromProductDocument(final Document productDocument) {
         final String kiloCaloriesPerHundredGrams = Optional.ofNullable(productDocument.selectFirst(".tableRow0 .nutritionLevel1"))
             .map(Element::text)
+            .filter(kcals -> kcals.matches("^[0-9]+kcal$"))
             .orElse("0kcal");
         return new Integer(kiloCaloriesPerHundredGrams.substring(0, kiloCaloriesPerHundredGrams.indexOf("kcal")));
     }
