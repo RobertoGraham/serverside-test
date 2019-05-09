@@ -1,9 +1,13 @@
 package robertograham.serversidetest;
 
 import robertograham.serversidetest.domain.Product;
+import robertograham.serversidetest.service.ExportService;
 import robertograham.serversidetest.service.ProductService;
 
-import javax.json.*;
+import javax.json.Json;
+import javax.json.JsonObject;
+import javax.json.JsonWriter;
+import javax.json.JsonWriterFactory;
 import javax.json.stream.JsonGenerator;
 import java.io.IOException;
 import java.io.StringWriter;
@@ -26,24 +30,9 @@ public final class Application {
              final StringWriter stringWriter = new StringWriter();
              final JsonWriter jsonWriter = JSON_WRITER_FACTORY.createWriter(stringWriter)) {
             final List<Product> products = productService.getProducts();
-            final JsonArrayBuilder jsonArrayBuilder = Json.createArrayBuilder();
-            products.stream()
-                .map(product -> {
-                    final JsonObjectBuilder jsonObjectBuilder = Json.createObjectBuilder();
-                    jsonObjectBuilder.add("title", product.getTitle());
-                    if (product.getKiloCaloriesPerHundredGrams() > 0)
-                        jsonObjectBuilder.add("kcal_per_100g", product.getKiloCaloriesPerHundredGrams());
-                    jsonObjectBuilder.add("unit_price", product.getUnitPrice());
-                    jsonObjectBuilder.add("description", product.getDescription());
-                    return jsonObjectBuilder;
-                })
-                .forEach(jsonArrayBuilder::add);
-            final JsonObjectBuilder jsonObjectBuilder = Json.createObjectBuilder();
-            jsonObjectBuilder.add("results", jsonArrayBuilder);
-            jsonObjectBuilder.add("total", Json.createObjectBuilder()
-                .add("gross", productService.calculateProductsUnitPriceGross(products))
-                .add("vat", productService.calculateProductsUnitPriceVat(products)));
-            jsonWriter.writeObject(jsonObjectBuilder.build());
+            final ExportService exportService = ExportService.newExportService();
+            final JsonObject exportJsonObject = exportService.getJsonObjectFromProducts(products);
+            jsonWriter.writeObject(exportJsonObject);
             System.out.println(stringWriter.toString());
         } catch (final IOException exception) {
             exception.printStackTrace();

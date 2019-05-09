@@ -26,7 +26,6 @@ import java.util.stream.Collectors;
 final class ProductServiceImpl implements ProductService {
 
     private static final URI PRODUCT_LIST_PAGE_URI = URI.create("https://jsainsburyplc.github.io/serverside-test/site/www.sainsburys.co.uk/webapp/wcs/stores/servlet/gb/groceries/berries-cherries-currants6039.html");
-    private static final BigDecimal VAT = new BigDecimal("1.2");
     private final CloseableHttpClient httpClient;
 
     ProductServiceImpl(final CloseableHttpClient httpClient) {
@@ -48,21 +47,6 @@ final class ProductServiceImpl implements ProductService {
             .filter(Optional::isPresent)
             .map(productOptional -> productOptional.orElse(null))
             .collect(Collectors.toList());
-    }
-
-    @Override
-    public BigDecimal calculateProductsUnitPriceGross(final List<Product> products) {
-        Objects.requireNonNull(products, "products cannot be null");
-        return products.stream()
-            .map(Product::getUnitPrice)
-            .reduce(BigDecimal.ZERO, BigDecimal::add);
-    }
-
-    @Override
-    public BigDecimal calculateProductsUnitPriceVat(final List<Product> products) {
-        Objects.requireNonNull(products, "products cannot be null");
-        final BigDecimal gross = calculateProductsUnitPriceGross(products);
-        return gross.subtract(gross.divide(VAT, 2, BigDecimal.ROUND_HALF_UP));
     }
 
     private Optional<Product> getOptionalProductFromProductElement(final Element productElement) {
