@@ -70,7 +70,7 @@ crashlytics.properties
 crashlytics-build.properties
 fabric.properties
 
-# Editor-based Rest Client
+# Editor-based Rest ProductService
 .idea/httpRequests
 ### Java template
 # Compiled class file

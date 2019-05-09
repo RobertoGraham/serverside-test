@@ -1,7 +1,7 @@
 package robertograham.serversidetest;
 
-import robertograham.serversidetest.client.Client;
-import robertograham.serversidetest.client.domain.Product;
+import robertograham.serversidetest.domain.Product;
+import robertograham.serversidetest.service.ProductService;
 
 import javax.json.*;
 import javax.json.stream.JsonGenerator;
@@ -13,19 +13,19 @@ import java.util.Map.Entry;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public final class Main {
+public final class Application {
 
     private static final JsonWriterFactory JSON_WRITER_FACTORY = Json.createWriterFactory(Stream.of(new SimpleEntry<>(JsonGenerator.PRETTY_PRINTING, true))
         .collect(Collectors.toMap(Entry::getKey, Entry::getValue)));
 
-    private Main() {
+    private Application() {
     }
 
     public static void main(final String[] args) {
-        try (final Client client = Client.newClient();
+        try (final ProductService productService = ProductService.newProductService();
              final StringWriter stringWriter = new StringWriter();
              final JsonWriter jsonWriter = JSON_WRITER_FACTORY.createWriter(stringWriter)) {
-            final List<Product> products = client.getProducts();
+            final List<Product> products = productService.getProducts();
             final JsonArrayBuilder jsonArrayBuilder = Json.createArrayBuilder();
             products.stream()
                 .map(product -> {
@@ -41,8 +41,8 @@ public final class Main {
             final JsonObjectBuilder jsonObjectBuilder = Json.createObjectBuilder();
             jsonObjectBuilder.add("results", jsonArrayBuilder);
             jsonObjectBuilder.add("total", Json.createObjectBuilder()
-                .add("gross", client.calculateProductsUnitPriceGross(products))
-                .add("vat", client.calculateProductsUnitPriceVat(products)));
+                .add("gross", productService.calculateProductsUnitPriceGross(products))
+                .add("vat", productService.calculateProductsUnitPriceVat(products)));
             jsonWriter.writeObject(jsonObjectBuilder.build());
             System.out.println(stringWriter.toString());
         } catch (final IOException exception) {

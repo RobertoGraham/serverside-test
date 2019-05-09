@@ -1,4 +1,4 @@
-package robertograham.serversidetest.client;
+package robertograham.serversidetest.service;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;
@@ -13,7 +13,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import robertograham.serversidetest.client.domain.Product;
+import robertograham.serversidetest.domain.Product;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -23,13 +23,13 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-final class ClientImpl implements Client {
+final class ProductServiceImpl implements ProductService {
 
     private static final URI PRODUCT_LIST_PAGE_URI = URI.create("https://jsainsburyplc.github.io/serverside-test/site/www.sainsburys.co.uk/webapp/wcs/stores/servlet/gb/groceries/berries-cherries-currants6039.html");
     private static final BigDecimal VAT = new BigDecimal("1.2");
     private final CloseableHttpClient httpClient;
 
-    ClientImpl(final CloseableHttpClient httpClient) {
+    ProductServiceImpl(final CloseableHttpClient httpClient) {
         this.httpClient = Objects.requireNonNull(httpClient, "httpClient cannot be null");
     }
 
@@ -134,7 +134,7 @@ final class ClientImpl implements Client {
 
     @Override
     public String toString() {
-        return "ClientImpl{" +
+        return "ProductServiceImpl{" +
             "httpClient=" + httpClient +
             '}';
     }
@@ -143,9 +143,9 @@ final class ClientImpl implements Client {
     public boolean equals(final Object object) {
         if (this == object)
             return true;
-        if (!(object instanceof ClientImpl))
+        if (!(object instanceof ProductServiceImpl))
             return false;
-        final ClientImpl client = (ClientImpl) object;
+        final ProductServiceImpl client = (ProductServiceImpl) object;
         return httpClient.equals(client.httpClient);
     }
 

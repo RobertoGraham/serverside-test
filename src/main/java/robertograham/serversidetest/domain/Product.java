@@ -1,4 +1,4 @@
-package robertograham.serversidetest.client.domain;
+package robertograham.serversidetest.domain;
 
 import java.math.BigDecimal;
 import java.util.Objects;
